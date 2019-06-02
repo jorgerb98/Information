@@ -30,7 +30,7 @@ public class FindOne {
 		UriComponents url = UriComponentsBuilder.fromUriString("/people/{id}").build();
 		PersonModel personModel = new PersonModel();
 		ResponseEntity<PersonModel> result =
-				testRestTemplate.exchange("/people/{id}", HttpMethod.POST,
+				testRestTemplate.exchange("/people/{id}", HttpMethod.GET,
 										  new HttpEntity<>(new HttpHeaders()),
 										  new ParameterizedTypeReference<PersonModel>() {});
 

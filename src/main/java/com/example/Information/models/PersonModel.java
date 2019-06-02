@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 public class PersonModel {
 
-	@JsonIgnore
 	private long id;
 
 	@NotNull
@@ -27,7 +26,7 @@ public class PersonModel {
 
 	@NotNull
 	private String birthPlace;
-	@JsonIgnore
+
 	private String password;
 
 	private PersonModel father;
@@ -36,12 +35,16 @@ public class PersonModel {
 
 	public static PersonModel from(Person person){
 		PersonModel personModel = new PersonModel();
+		personModel.setId(person.getId());
 		personModel.setAge(person.getAge());
 		personModel.setBirthPlace(person.getBirthPlace());
 		personModel.setLastname(person.getLastname());
 		personModel.setName(person.getName());
-		personModel.setSons(person.getSons().stream().map(PersonModel::from).collect(Collectors.toList()));
-		personModel.setFather(PersonModel.from(person.getFather()));
+		if (person.getSons().isPresent())
+			personModel.setSons(person.getSons().get().stream().map(PersonModel::from).collect(Collectors.toList()));
+		if (person.getFather().isPresent())
+			personModel.setFather(PersonModel.from(person.getFather().get()));
+
 		personModel.setPassword(person.getPassword());
 
 		return personModel;

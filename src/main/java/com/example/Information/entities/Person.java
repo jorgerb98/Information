@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -87,16 +88,16 @@ public class Person implements UserDetails {
 		this.birthPlace = birthPlace;
 	}
 
-	public Person getFather() {
-		return father;
+	public Optional<Person> getFather() {
+		return Optional.ofNullable(father);
 	}
 
 	public void setFather(Person father) {
 		this.father = father;
 	}
 
-	public Set<Person> getSons() {
-		return sons;
+	public Optional<Set<Person>> getSons() {
+		return Optional.ofNullable(sons);
 	}
 
 	public void setSons(Set<Person> sons) {

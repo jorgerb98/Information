@@ -48,6 +48,7 @@ public class PersonServiceImpl implements PersonService {
 		person.setLastname(personModel.getLastname());
 		person.setName(personModel.getName());
 		person.setSons(new HashSet<>());
+		person.setPassword(personModel.getPassword());
 
 		return PersonModel.from(personRepository.save(person));
 	}
@@ -68,8 +69,8 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public String deleteSon(long id) throws Exception {
 		Person son = personRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-
-		son.getFather().deleteSon(son);
+		Person father = son.getFather().orElseThrow(EntityNotFoundException::new);
+		father.deleteSon(son);
 
 		return "Son has been deleted ";
 	}

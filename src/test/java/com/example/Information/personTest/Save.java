@@ -28,11 +28,11 @@ public class Save {
 		UriComponents url = UriComponentsBuilder.fromUriString("/people/{id}").build();
 		PersonModel personModel = new PersonModel();
 		ResponseEntity<PersonModel> result =
-				testRestTemplate.exchange("/people/{id}", HttpMethod.GET,
+				testRestTemplate.exchange("/people/{id}", HttpMethod.POST,
 										  new HttpEntity<>(new HttpHeaders()),
 										  new ParameterizedTypeReference<PersonModel>() {});
 
-		assertEquals(HttpStatus.OK, result.getStatusCode());
+		assertEquals(HttpStatus.CREATED, result.getStatusCode());
 		assertNotNull(result.getBody());
 	}
 }
