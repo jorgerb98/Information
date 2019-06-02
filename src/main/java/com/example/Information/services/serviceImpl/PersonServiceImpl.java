@@ -47,7 +47,17 @@ public class PersonServiceImpl implements PersonService {
 		person.setBirthPlace(personModel.getBirthPlace());
 		person.setLastname(personModel.getLastname());
 		person.setName(personModel.getName());
-		person.setSons(new HashSet<>());
+		if (personModel.getSons().isPresent()){
+			if (!personModel.getSons().get().isEmpty()){
+				person.setSons(personModel.getSons().get()
+										  .stream()
+										  .filter(personModel1 -> personModel1.getId().isPresent())
+										  .map(personModel1 -> personRepository.findById(personModel1.getId().get())
+																			   .get())
+										  .collect(Collectors.toSet()));
+			}person.setSons(new HashSet<>());
+
+		}
 		person.setPassword(personModel.getPassword());
 
 		return PersonModel.from(personRepository.save(person));

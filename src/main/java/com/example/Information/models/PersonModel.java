@@ -45,7 +45,6 @@ public class PersonModel {
 		if (person.getFather().isPresent())
 			personModel.setFather(PersonModel.from(person.getFather().get()));
 
-		personModel.setPassword(person.getPassword());
 
 		return personModel;
 	}
