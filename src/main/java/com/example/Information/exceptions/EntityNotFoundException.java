@@ -13,4 +13,7 @@ public class EntityNotFoundException extends NotFoundException {
 		super(clazz.getSimpleName() + " not found with id " + id);
 	}
 
+	public EntityNotFoundException() {
+
+	}
 }

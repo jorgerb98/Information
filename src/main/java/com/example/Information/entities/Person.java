@@ -1,16 +1,21 @@
 package com.example.Information.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.example.Information.constants.AuthorityName;
+import com.example.Information.models.PersonModel;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
-public class Person {
+public class Person implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +34,18 @@ public class Person {
 	@NotNull
 	private String birthPlace;
 
-	private Optional<Person> father;
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	private Person father;
 
-	private Optional<List<Person>> sons;
+	@OneToMany(mappedBy = "father" )
+	private Set<Person> sons;
+
+	@ManyToMany
+	private List<Authority> authorities;
+
+	@NotNull
+	private String password;
+
 
 	public long getId() {
 		return id;
@@ -73,19 +87,74 @@ public class Person {
 		this.birthPlace = birthPlace;
 	}
 
-	public Optional<Person> getFather() {
+	public Person getFather() {
 		return father;
 	}
 
-	public void setFather(Optional<Person> father) {
+	public void setFather(Person father) {
 		this.father = father;
 	}
 
-	public Optional<List<Person>> getSons() {
+	public Set<Person> getSons() {
 		return sons;
 	}
 
-	public void setSons(Optional<List<Person>> sons) {
+	public void setSons(Set<Person> sons) {
 		this.sons = sons;
+	}
+
+	public void addSon(Person son){
+		sons.add(son);
+	}
+	public void deleteSon(Person son){
+		sons.remove(son);
+	}
+
+	public boolean wasOnLinage(Person person) {
+		boolean var =sons.stream().anyMatch(p -> p.id == person.getId());
+
+		return sons.stream().anyMatch(person1 -> person1.wasOnLinage(person));
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return authorities.stream()
+						  .map(Authority::getName)
+						  .map(AuthorityName::name)
+						  .map(SimpleGrantedAuthority::new)
+						  .collect(Collectors.toList());	}
+
+	@Override
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
+	public String getUsername() {
+		return name;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 }

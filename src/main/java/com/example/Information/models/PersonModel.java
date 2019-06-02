@@ -1,20 +1,19 @@
 package com.example.Information.models;
 
 import com.example.Information.entities.Person;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
 
 public class PersonModel {
 
+	@JsonIgnore
+	private long id;
 
 	@NotNull
 	private String name;
@@ -28,6 +27,10 @@ public class PersonModel {
 
 	@NotNull
 	private String birthPlace;
+	@JsonIgnore
+	private String password;
+
+	private PersonModel father;
 
 	private List<PersonModel> sons;
 
@@ -37,10 +40,19 @@ public class PersonModel {
 		personModel.setBirthPlace(person.getBirthPlace());
 		personModel.setLastname(person.getLastname());
 		personModel.setName(person.getName());
-		if (person.getSons().isPresent()){
-			personModel.setSons(person.getSons().get().stream().map(PersonModel::from).collect(Collectors.toList()));
-		}
+		personModel.setSons(person.getSons().stream().map(PersonModel::from).collect(Collectors.toList()));
+		personModel.setFather(PersonModel.from(person.getFather()));
+		personModel.setPassword(person.getPassword());
+
 		return personModel;
+	}
+
+	public Optional<Long> getId() {
+		return Optional.ofNullable(id);
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -75,11 +87,25 @@ public class PersonModel {
 		this.birthPlace = birthPlace;
 	}
 
-	public List<PersonModel> getSons() {
-		return sons;
+	public Optional<List<PersonModel>> getSons() {
+		return Optional.ofNullable(sons);
 	}
-
 	public void setSons(List<PersonModel> sons) {
 		this.sons = sons;
+	}
+	public Optional<PersonModel> getFather() {
+		return Optional.ofNullable(father);
+	}
+
+	public void setFather(PersonModel father) {
+		this.father = father;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }
